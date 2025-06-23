@@ -24,7 +24,12 @@ add_executable(hello_control src/hello_control.cpp)
 ament_target_dependencies(hello_control rclcpp std_msgs)
 rosidl_target_interfaces(hello_control ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
-install(TARGETS hello_control DESTINATION lib/${PROJECT_NAME})
+# 添加trajectory_player可执行文件
+add_executable(trajectory_player src/trajectory_player.cpp)
+ament_target_dependencies(trajectory_player rclcpp std_msgs)
+rosidl_target_interfaces(trajectory_player ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+install(TARGETS hello_control trajectory_player DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
