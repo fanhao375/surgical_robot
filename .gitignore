@@ -1,0 +1,47 @@
+# Build directories
+build/
+devel/
+install/
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.swp
+*.swo
+*~
+.*.swp
+
+# IDE specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ROS specific
+.catkin_workspace
+src/CMakeLists.txt
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Large binary files
+*.bag
+*.db
+*.sqlite
+
+# Custom
+surgical_robot_ws/build/
+surgical_robot_ws/devel/
+surgical_robot_ws/install/
+surgical_robot_ws/logs/ 

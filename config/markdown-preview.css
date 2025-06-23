@@ -1,0 +1,23 @@
+/* 取消Markdown预览中的斜体 */
+em, i, cite {
+  font-style: normal !important;
+}
+
+/* 保持引用块的样式但不使用斜体 */
+blockquote {
+  font-style: normal !important;
+  border-left: 4px solid #ddd;
+  padding-left: 16px;
+  color: #666;
+}
+
+/* 代码注释不使用斜体 */
+.hljs-comment,
+.hljs-quote {
+  font-style: normal !important;
+}
+
+/* 确保加粗仍然有效 */
+strong, b {
+  font-weight: bold;
+} 

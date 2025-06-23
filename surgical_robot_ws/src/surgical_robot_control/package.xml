@@ -1,0 +1,49 @@
+<!-- 嵌入式视角：XML声明类似于嵌入式C代码的头文件声明，定义了文件格式标准 -->
+<?xml version="1.0"?>
+<!-- 嵌入式视角：类似于编译器的语法检查规则，确保配置文件符合ROS2的嵌入式部署标准 -->
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!-- 嵌入式视角：package标签相当于嵌入式项目的Makefile配置，format="3"指定了构建系统版本 -->
+<package format="3">
+  <!-- 嵌入式视角：包名类似于嵌入式固件的模块标识符，用于链接时的符号解析 -->
+  <name>surgical_robot_control</name>
+  <!-- 嵌入式视角：版本号用于固件OTA升级时的版本管理，防止降级或版本冲突 -->
+  <version>0.0.0</version>
+  <!-- 嵌入式视角：描述信息类似于嵌入式代码的Doxygen文档，便于团队理解模块功能 -->
+  <description>TODO: Package description</description>
+  <!-- 嵌入式视角：维护者信息相当于代码的作者标记，用于问题追踪和代码审查 -->
+  <maintainer email="haofan375@gmail.com">haofan</maintainer>
+  <!-- 嵌入式视角：许可证决定了代码能否用于商业嵌入式产品，影响IP保护策略 -->
+  <license>TODO: License declaration</license>
+
+  <!-- 嵌入式视角：构建工具类似于交叉编译工具链（如arm-none-eabi-gcc），用于生成目标平台代码 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- 嵌入式视角：消息生成器类似于嵌入式通信协议的序列化工具，将.msg转换为C++结构体 -->
+  <build_depend>rosidl_default_generators</build_depend>
+
+  <!-- 嵌入式视角：运行时库类似于嵌入式RTOS的消息队列API，提供进程间通信支持 -->
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <!-- 嵌入式视角：以下是运行时依赖库，类似于嵌入式系统的HAL层和驱动库 -->
+  <!-- 嵌入式视角：rclcpp相当于嵌入式RTOS的任务管理和IPC机制封装 -->
+  <depend>rclcpp</depend>
+  <!-- 嵌入式视角：std_msgs定义了基础数据类型，类似于stdint.h中的uint8_t等标准类型 -->
+  <depend>std_msgs</depend>
+  <!-- 嵌入式视角：geometry_msgs用于机器人运动控制，包含位置、速度等物理量的数据结构 -->
+  <depend>geometry_msgs</depend>
+
+  <!-- 嵌入式视角：测试依赖类似于嵌入式的单元测试框架和静态代码分析工具 -->
+  <!-- 嵌入式视角：代码规范检查，类似于MISRA-C标准检查，确保代码安全性 -->
+  <test_depend>ament_lint_auto</test_depend>
+  <!-- 嵌入式视角：通用检查工具集，包括内存泄漏检测、栈溢出分析等 -->
+  <test_depend>ament_lint_common</test_depend>
+
+  <!-- 嵌入式视角：export标签类似于链接器脚本配置，指定如何将模块集成到系统中 -->
+  <export>
+    <!-- 嵌入式视角：指定使用CMake构建系统，类似于指定使用Make还是SCons -->
+    <build_type>ament_cmake</build_type>
+  </export>
+
+  <!-- 嵌入式视角：声明该包包含通信接口定义，类似于CAN/UART协议栈的消息定义层 -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+</package>
