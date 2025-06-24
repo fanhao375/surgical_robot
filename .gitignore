@@ -44,4 +44,4 @@ Thumbs.db
 surgical_robot_ws/build/
 surgical_robot_ws/devel/
 surgical_robot_ws/install/
-surgical_robot_ws/logs/ 
+surgical_robot_ws/logs/ surgical_robot_ws/log/
