@@ -29,7 +29,25 @@ add_executable(trajectory_player src/trajectory_player.cpp)
 ament_target_dependencies(trajectory_player rclcpp std_msgs)
 rosidl_target_interfaces(trajectory_player ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
-install(TARGETS hello_control trajectory_player DESTINATION lib/${PROJECT_NAME})
+# 添加CAN测试程序
+add_executable(can_test src/can_test.cpp)
+# CAN测试程序不需要ROS依赖，只需要系统库
+
+# 添加CAN桥接节点
+add_executable(can_bridge_node src/can_bridge_node.cpp)
+ament_target_dependencies(can_bridge_node rclcpp std_msgs)
+rosidl_target_interfaces(can_bridge_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
+# 添加当前源目录到include路径以找到can_protocol.h
+target_include_directories(can_bridge_node PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 添加CAN消息测试程序
+add_executable(can_message_test src/can_message_test.cpp)
+target_include_directories(can_message_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(TARGETS hello_control trajectory_player can_test can_bridge_node can_message_test DESTINATION lib/${PROJECT_NAME})
+
+# 安装launch文件
+install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}/)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
