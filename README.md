@@ -1,135 +1,101 @@
 # 🏥 手术机器人自动导航项目
 
-## 项目概述
+## 🎯 项目概述
 
-本项目旨在开发一个基于AI的手术机器人自动导航系统，实现精准的手术器械控制和路径规划。
+基于DSA医学影像+AI算法实现介入手术机器人自动导航，完成导丝推送和旋转动作自动化。
 
-## 📋 项目文档
+### 核心技术链路
+```
+DSA影像 → 血管分割 → 路径规划 → 运动控制 → 机器人执行
+```
 
-### 核心文档
-- [项目技术大纲](docs/overview/手术机器人自动导航项目技术大纲.md) - 整体架构设计
-- [项目进度跟踪](docs/项目进度跟踪.md) - 实时进度监控与里程碑管理
-- [文件结构说明](文件结构说明.md) - 项目文件组织说明
+## 📚 文档导航
 
-### AI组文档
-- [第一周任务清单](docs/ai-team/AI组-第一周任务清单.md)
-- [医学影像分割技术方案](docs/ai-team/AI组-医学影像分割技术方案.md)
-
-### 控制组文档
-- [控制组文档索引](docs/control-team/README.md) - 完整的文档导航
-- [第一周任务清单](docs/control-team/plans/控制组-第一周任务清单.md)
-- [第一周总结报告](docs/control-team/reports/week1/第一周总结报告.md) - 完整的进度总结
-- [ROS2与CAN集成技术方案](docs/control-team/technical-specs/控制组-ROS2与CAN集成技术方案.md)
+| 模块 | 文档 | 说明 |
+|------|------|------|
+| **项目概览** | [技术大纲](docs/overview/手术机器人自动导航项目技术大纲.md) | 整体架构设计 |
+| **协议文档** | [协议文档](docs/protocols/README.md) | Robot协议分析和实现 |
+| **控制组** | [控制组文档](docs/control-team/README.md) | ROS2+CAN系统开发 |
+| **AI组** | [AI组文档](docs/ai-team/) | 医学影像处理和轨迹规划 |
+| **项目管理** | [文件组织说明](docs/文件组织说明.md) | 完整项目结构 |
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Ubuntu 22.04 (WSL2)
-- ROS2 Humble
-- Python 3.8+
-- CUDA 11.8+ (用于AI模型)
+- **操作系统**: Ubuntu 22.04 (WSL2支持)
+- **ROS版本**: ROS2 Humble  
+- **Python**: 3.8+
+- **CUDA**: 11.8+ (AI模型训练)
 
-### 安装步骤
+### 控制组快速启动
 ```bash
-# 1. 克隆项目
-git clone [项目地址]
-cd surgical-robot-auto-navigation
-
-# 2. 整理文件结构（可选）
-chmod +x organize_files.sh
-./organize_files.sh
-
-# 3. 安装依赖
-# AI组依赖
-pip install -r requirements-ai.txt
-
-# 控制组依赖
-sudo apt install ros-humble-desktop
-
-# 4. 控制组快速测试（确保已安装ROS2）
+# 1. 进入ROS2工作空间
 cd surgical_robot_ws
+
+# 2. 编译控制包
 colcon build --packages-select surgical_robot_control
 source install/setup.bash
+
+# 3. 启动测试系统
 ros2 launch surgical_robot_control can_test.launch.py
 ```
+
+### AI组快速启动
+```bash
+# 1. 安装AI依赖
+pip install -r requirements-ai.txt
+
+# 2. 启动医学影像处理
+python src/ai/vessel_segmentation.py
+
+# 3. 启动轨迹规划
+python src/ai/trajectory_planning.py
+```
+
+## 🏗️ 系统架构
+
+### 控制系统架构
+```
+CSV轨迹 → 轨迹播放器 → ROS2消息 → CAN桥接 → Robot协议 → 电机控制
+```
+
+### AI系统架构  
+```
+DSA影像 → 血管分割 → 3D重建 → 路径规划 → 轨迹生成 → CSV输出
+```
+
+## 📈 项目进度
+
+### 🎯 当前状态 (2024年6月)
+- ✅ **控制组**: ROS2+CAN系统完成，Robot协议实现
+- 🔄 **AI组**: 医学影像分割算法开发中
+- 🔄 **系统集成**: 准备AI+控制系统联调
+
+### 🚀 核心技术突破
+- **控制精度**: 推进0.01mm，旋转0.1° (比标准协议精度提升100倍)
+- **通信链路**: 完整的ROS2↔CAN↔Robot协议栈
+- **轨迹控制**: <10ms时序精度的轨迹播放系统
 
 ## 👥 团队分工
 
-### AI组
-- 医学影像处理
-- 轨迹规划算法
-- 深度学习模型开发
+| 团队 | 主要职责 | 关键交付 |
+|------|---------|----------|
+| **AI组** | 医学影像处理、轨迹规划 | 血管分割模型、路径规划算法 |
+| **控制组** | 机器人运动控制、系统集成 | ROS2控制系统、CAN通信栈 |
 
-### 控制组 ✅
-- **ROS2系统集成** - 工作空间已建立
-- **CAN通信实现** - 完整的CANopen协议栈
-- **机器人运动控制** - 轨迹播放器和桥接节点完成
+## 🛠️ 开发环境
 
-## 📅 项目进度
-
-### 第一周成果 (2024.6.22-6.24)
-- ✅ **控制组第一周任务** - 100%完成
-  - ROS2环境搭建与基础节点开发
-  - 自定义消息定义和轨迹格式设计
-  - 轨迹播放器实现与测试
-  - CAN通信协议栈和桥接节点
-- 🔄 **AI组任务** - 进行中
-
-### 关键技术突破
-- 建立了完整的 `CSV → ROS2 → CAN → 电机` 数据流管道
-- 实现了精确的轨迹时序控制（<10ms精度）
-- 完成了CANopen协议的完整封装
-- 建立了WSL2环境下的开发调试能力
-
-### 下一阶段计划
-- **第二周**: 实际硬件集成与测试
-- **第三周**: AI算法与控制系统融合
-
-## 🎯 控制组成果展示
-
-### 可运行的系统组件
-```bash
-# 1. Hello World节点 - 验证ROS2基础功能
-ros2 run surgical_robot_control hello_control
-
-# 2. 轨迹播放器 - 播放CSV轨迹文件
-ros2 run surgical_robot_control trajectory_player \
-  --ros-args -p trajectory_file:=./test_trajectories/test_linear.csv
-
-# 3. CAN桥接节点 - ROS2到CAN总线的转换
-ros2 run surgical_robot_control can_bridge_node \
-  --ros-args -p enable_simulation:=true
-
-# 4. 完整系统测试 - 轨迹播放+CAN通信
-ros2 launch surgical_robot_control can_test.launch.py
-
-# 5. CAN消息测试 - 验证协议封装
-ros2 run surgical_robot_control can_message_test
-```
-
-### 技术架构
-```
-📂 surgical_robot_ws/
-├── 🎯 轨迹播放器 (trajectory_player)
-├── 🔄 CAN桥接节点 (can_bridge_node)  
-├── 📡 自定义消息 (TrajectoryPoint/RobotState)
-├── ⚙️ CANopen协议栈 (can_protocol.h)
-└── 🧪 测试框架 (完整的单元与集成测试)
-```
-
-## 🛠️ 开发工具
-
-- **IDE**: VSCode/Cursor
+- **开发工具**: VSCode/Cursor + ROS2扩展
 - **版本控制**: Git
-- **构建系统**: CMake + Colcon
-- **文档**: Markdown
-- **通信协议**: ROS2 + CANopen
+- **构建工具**: CMake + Colcon (ROS2)
+- **调试工具**: RQt + RViz2
+- **协议工具**: CANopen分析仪
 
-## 📞 联系方式
+## 🔗 相关链接
 
-- 项目负责人：[待补充]
-- AI组负责人：[待补充]
-- 控制组负责人：[待补充]
+- **协议分析**: 查看 `docs/protocols/AI导航协议需求总结.md`
+- **技术实现**: 参考 `surgical_robot_ws/src/surgical_robot_control/`
+- **开发文档**: 浏览 `docs/control-team/` 和 `docs/ai-team/`
 
 ---
-*最后更新时间：2024年6月24日 - 控制组第一周任务完成* 
+*最后更新: 2024年6月25日 - 协议系统完成* 

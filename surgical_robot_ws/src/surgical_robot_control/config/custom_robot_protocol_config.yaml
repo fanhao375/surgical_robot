@@ -1,0 +1,197 @@
+# 自定义机器人协议配置 (基于robot协议CSV)
+custom_robot_protocol:
+  # ================================
+  # AI导航核心配置
+  # ================================
+  
+  # 运动控制精度 (基于CSV组6定义)
+  motion_control:
+    position_precision: 0.01      # mm (CSV中的单位: 0.01mm)
+    angle_precision: 0.1          # degree (CSV中的单位: 0.1°)
+    velocity_precision: 0.01      # mm/s (CSV中的单位: 0.01mm/s)
+    angular_velocity_precision: 0.1  # deg/s (CSV中的单位: 0.1°/s)
+  
+  # AI导航安全限制
+  safety_limits:
+    max_advance_distance: 300.0   # mm 
+    max_rotation_angle: 720.0     # degrees (2圈)
+    max_advance_speed: 10.0       # mm/s
+    max_rotation_speed: 180.0     # deg/s
+    max_grip_force: 1000.0        # g (CSV组10中的单位)
+    max_resistance: 500.0         # 阻力阈值
+    
+  # ================================
+  # 协议映射配置 (基于CSV组号)
+  # ================================
+  
+  # 组3: 握手协议
+  handshake:
+    can_id: 0x300
+    timeout_ms: 1000
+    retry_count: 3
+    sequence_range: [0, 255]
+    
+  # 组4: 急停和错误
+  emergency:
+    status_can_id: 0x400
+    reset_can_id: 0x403
+    m3_fault_can_id: 0x406     # 导丝推进电机故障
+    m4_fault_can_id: 0x407     # 导丝旋转电机故障
+    
+  # 组5: 节点状态控制  
+  node_control:
+    box_state_ctrl_can_id: 0x500
+    impact_state_can_id: 0x501
+    
+  # 组6: 运动控制 ⭐ AI导航核心
+  motion_commands:
+    # CSV中的GW_Go_Data - 导丝前进速度控制
+    guidewire_forward_speed:
+      can_id: 0x600
+      unit: "0.01mm/s"
+      range: [-1000, 1000]      # -10mm/s 到 +10mm/s
+      
+    # CSV序号1 - 导丝旋转速度控制  
+    guidewire_rotation_speed:
+      can_id: 0x601
+      unit: "0.1deg/s"
+      range: [-1800, 1800]      # -180deg/s 到 +180deg/s
+      
+    # CSV序号6 - 导丝前进位置控制
+    guidewire_forward_position:
+      can_id: 0x606
+      unit: "0.01mm"
+      range: [0, 30000]         # 0 到 300mm
+      
+    # CSV序号7 - 导丝旋转位置控制
+    guidewire_rotation_position:
+      can_id: 0x607
+      unit: "0.1deg" 
+      range: [-7200, 7200]      # -720deg 到 +720deg
+      
+  # 组8: 运动信息反馈 ⭐ AI导航反馈
+  motion_feedback:
+    # CSV序号0 - 导丝前进位置数据
+    guidewire_position_feedback:
+      can_id: 0x800
+      unit: "0.01mm"
+      update_rate_hz: 50
+      
+    # CSV序号1 - 导丝旋转位置数据  
+    guidewire_angle_feedback:
+      can_id: 0x801
+      unit: "0.1deg"
+      update_rate_hz: 50
+      
+  # 组10: 传感器数据 ⭐ AI导航安全
+  sensor_data:
+    # CSV序号0 - 导丝当前夹紧力 (Force[0])
+    grip_force:
+      can_id: 0xA00
+      unit: "g"
+      update_rate_hz: 20
+      
+    # CSV序号1 - 导丝阻力主左
+    resistance_left:
+      can_id: 0xA01
+      unit: "raw_value"
+      update_rate_hz: 20
+      
+    # CSV序号2 - 导丝阻力主右  
+    resistance_right:
+      can_id: 0xA02
+      unit: "raw_value"
+      update_rate_hz: 20
+
+# ================================
+# ROS2桥接节点配置
+# ================================
+
+can_bridge_node:
+  ros__parameters:
+    # 协议选择
+    protocol_type: "CustomRobot"   # 使用自定义协议
+    can_interface: "can0"
+    
+    # AI导航电机映射
+    guidewire_push_motor_id: 3     # M3电机 (CSV组4序号6)
+    guidewire_rotate_motor_id: 4   # M4电机 (CSV组4序号7)
+    
+    # 单位转换比率 (基于CSV协议精度)
+    push_ratio: 100.0              # mm -> 0.01mm
+    rotate_ratio: 10.0             # deg -> 0.1deg
+    speed_ratio: 100.0             # mm/s -> 0.01mm/s
+    angular_speed_ratio: 10.0      # deg/s -> 0.1deg/s
+    
+    # 通信配置
+    handshake_interval_ms: 1000    # 握手间隔
+    feedback_rate_hz: 50           # 状态反馈频率
+    timeout_ms: 200                # 通信超时
+    
+    # AI导航特殊配置
+    enable_force_feedback: true    # 启用力反馈
+    enable_resistance_monitoring: true  # 启用阻力监控
+    safety_monitoring: true        # 启用安全监控
+
+# ================================  
+# AI导航接口配置
+# ================================
+
+ai_navigation_interface:
+  # 控制参数
+  control:
+    command_rate_hz: 100           # AI命令频率
+    feedback_rate_hz: 50           # 反馈频率
+    safety_check_rate_hz: 20       # 安全检查频率
+    
+  # 阈值配置
+  thresholds:
+    position_error_threshold: 0.5  # mm
+    angle_error_threshold: 2.0     # degrees
+    force_warning_threshold: 800   # g
+    force_error_threshold: 1000    # g
+    resistance_warning_threshold: 400
+    resistance_error_threshold: 500
+    
+  # AI导航模式
+  navigation_modes:
+    manual: false                  # 手动模式
+    semi_auto: false              # 半自动模式  
+    full_auto: true               # 全自动模式 (AI导航)
+    
+  # 路径规划集成
+  path_planning:
+    enable_adaptive_speed: true    # 自适应速度
+    enable_force_feedback: true    # 力反馈调节
+    enable_collision_avoidance: true  # 碰撞避免
+    
+# ================================
+# 调试和诊断配置  
+# ================================
+
+debugging:
+  log_level: "INFO"               # DEBUG, INFO, WARN, ERROR
+  enable_can_trace: false         # CAN消息跟踪
+  enable_performance_monitoring: true  # 性能监控
+  save_trajectory_data: true      # 保存轨迹数据
+  
+diagnostic:
+  enable_health_monitoring: true  # 健康监控
+  alert_thresholds:
+    communication_timeout: 500    # ms
+    position_deviation: 1.0      # mm
+    force_spike: 200             # g
+    
+# ================================
+# 测试配置
+# ================================
+
+testing:
+  simulation_mode: false          # 仿真模式
+  test_trajectories:
+    - name: "linear_advance"
+      file: "test_linear_10mm.csv"
+    - name: "rotation_test"  
+      file: "test_rotation_90deg.csv"
+    - name: "spiral_motion"
+      file: "test_spiral_motion.csv" 
