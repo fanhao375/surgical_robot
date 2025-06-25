@@ -26,7 +26,7 @@ public:
             
         /* 使用ROS2日志系统输出信息级别的日志 */
         /* this->get_logger()获取当前节点的日志器对象 */
-        RCLCPP_INFO(this->get_logger(), "控制节点已启动");
+        RCLCPP_INFO(this->get_logger(), "控制节点已启动（测试）");
     }
 
 private:

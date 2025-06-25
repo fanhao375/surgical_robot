@@ -92,7 +92,7 @@ private:
             
             trajectory_pub_->publish(msg);
             
-            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 100,
                 "发送轨迹点 [%zu/%zu]: push=%.2fmm, rotate=%.2f°",
                 current_index_ + 1, trajectory_.size(),
                 msg.push_position, msg.rotate_angle);
